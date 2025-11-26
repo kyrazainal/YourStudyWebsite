@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Study Space</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #ffe4f3, #e4f0ff, #fff7d9);
+      --card-bg: #fffdfb;
+      --accent: #ff8bb5;
+      --accent-soft: #ffe3f0;
+      --accent-2: #8bb4ff;
+      --accent-3: #ffd57f;
+      --text-main: #33313b;
+      --text-soft: #6c6a77;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1100px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border-radius: 32px;
+      box-shadow: var(--shadow-soft);
+      padding: 20px 18px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .window-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 4px 6px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+      margin-right: 8px;
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ff6b81; }
+    .dot-yellow { background: #ffd46b; }
+    .dot-green { background: #38c97b; }
+
+    .window-title {
+      font-family: "Fredoka", system-ui;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-soft);
+    }
+
+    .window-title span.logo-emoji {
+      font-size: 1.3rem;
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 780px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      background: linear-gradient(145deg, #ffeaf5, #f2f3ff);
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle at 30% 10%, #fff4c7, transparent 60%);
+      opacity: 0.8;
+      top: -40px;
+      right: -40px;
+      pointer-events: none;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-title {
+      font-family: "Fredoka", system-ui;
+      font-size: 1.3rem;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-top: 2px;
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-switch button {
+      border: none;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--text-soft);
+    }
+
+    .sidebar-section {
+      position: relative;
+      z-index: 1;
+      margin-top: 12px;
+    }
+
+    .profile-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: var(--radius-md);
+      padding: 10px 11px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ffe0ec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .profile-text-main {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .profile-text-sub {
+      font-size: 0.74rem;
+      color: var(--text-soft);
+    }
+
+    .mini-info {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .mini-pill {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 999px;
+      padding: 6px 8px;
+      font-size: 0.73rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .mini-pill span.icon {
+      font-size: 1rem;
+    }
+
+    .sidebar-footer-note {
+      font-size: 0.73rem;
+      color: var(--text-soft);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* MAIN */
+
+    main {
+      min-height: 260px;
+    }
+
+    header.main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .welcome-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    #welcome-text {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .welcome-sub {
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    .logout-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: var(--accent-soft);
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .logout-btn span.icon {
+      font-size: 0.95rem;
+    }
+
+    /* AUTH */
+
+    #auth-section {
+      padding: 4px 2px 0;
+    }
+
+    .tabs {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      padding: 4px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 20px rgba(199, 166, 208, 0.3);
+    }
+
+    .tabs button {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+
+    .tabs button.active {
+      background: #fff;
+      color: var(--text-main);
+      box-shadow: 0 8px 20px rgba(207, 179, 225, 0.35);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 16px;
+      box-shadow: 0 14px 28px rgba(194, 170, 215, 0.25);
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      font-family: "Fredoka", system-ui;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+    }
+
+    label span {
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #e1d8f2;
+      font-size: 0.85rem;
+      outline: none;
+      background: #fffafc;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 139, 181, 0.18);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 18px rgba(255, 90, 150, 0.35);
+    }
+
+    button.primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 6px 12px rgba(255, 90, 150, 0.35);
+    }
+
+    button.secondary {
+      background: #fff;
+      border: 1px solid #eadff7;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      margin-top: 4px;
+      margin-right: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .error {
+      color: #ff4b5c;
+      font-size: 0.75rem;
+      margin-top: 4px;
+      min-height: 1em;
+    }
+
+    /* DASHBOARD */
+
+    #dashboard-section {
+      margin-top: 4px;
+    }
+
+    .widget-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .widget {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .widget::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at -10% -20%, rgba(255, 255, 255, 0.9), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .widget-title {
+      font-family: "Fredoka", system-ui;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .widget-title span.icon {
+      font-size: 1.1rem;
+    }
+
+    .widget-badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-soft);
+    }
+
+    .widget-body {
+      position: relative;
+      z-index: 1;
+      font-size: 0.8rem;
+    }
+
+    #today-target {
+      min-height: 90px;
+    }
+
+    /* SUBJECTS */
+
+    #subjects-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0 0 6px 0;
+      max-height: 140px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+    }
+
+    #subjects-list li {
+      padding: 3px 0;
+      border-bottom: 1px dashed #f1e6ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #subjects-list li span.dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffc6dd;
+      flex-shrink: 0;
+    }
+
+    #new-subject-input {
+      font-size: 0.78rem;
+    }
+
+        .subject-details-placeholder {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      min-height: 40px;
+      margin-bottom: 6px;
+    }
+
+    #subject-notes {
+      min-height: 80px;
+      margin-bottom: 6px;
+    }
+
+    .subject-selected {
+      background: #ffeaf5;
+      border-radius: 10px;
+      padding-inline: 6px;
+    }
+
+        .tasks-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0 0 6px 0;
+      max-height: 120px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+    }
+
+    .tasks-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 0;
+      border-bottom: 1px dashed #f1e6ff;
+    }
+
+    .task-main {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .task-main span.text {
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .task-main span.text.done {
+      text-decoration: line-through;
+      color: var(--text-soft);
+      opacity: 0.75;
+    }
+
+    .task-delete {
+      border: none;
+      background: transparent;
+      font-size: 0.8rem;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+
+    .task-delete:hover {
+      opacity: 1;
+    }
+
+    .tasks-input-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tasks-input-row input {
+      flex: 1;
+      font-size: 0.78rem;
+    }
+
+
+    /* TIMER & STOPWATCH */
+
+    #timer-display,
+    #stopwatch-display {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      margin: 7px 0 8px;
+      font-family: "Fredoka", system-ui;
+    }
+
+    /* QUOTE */
+
+    #quote-text {
+      font-size: 0.8rem;
+      font-style: italic;
+      min-height: 40px;
+      line-height: 1.4;
+    }
+
+    /* CALENDAR */
+
+    .calendar-body {
+      font-size: 0.78rem;
+    }
+
+    .calendar-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .calendar-month-label {
+      font-family: "Fredoka", system-ui;
+      font-size: 0.9rem;
+    }
+
+    .calendar-nav {
+      border: none;
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #eadff7;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .calendar-day-name {
+      font-size: 0.7rem;
+      text-align: center;
+      color: var(--text-soft);
+      padding-bottom: 2px;
+    }
+
+    .calendar-cell {
+      height: 26px;
+      border-radius: 10px;
+      background: #fffafc;
+      border: 1px solid #f3e7ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calendar-cell.other-month {
+      opacity: 0.4;
+    }
+
+    .calendar-cell.today {
+      background: #ffe3f0;
+      border-color: #ffb3d0;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(255, 139, 181, 0.35);
+    }
+
+    /* CALCULATOR */
+
+    .calculator-widget {
+      background: linear-gradient(145deg, #ffe6f2, #e8f1ff);
+    }
+
+    #calc-display-main {
+      width: 100%;
+      padding: 8px 10px 4px;
+      border-radius: 14px;
+      background: #f7fbff;
+      border: 1px solid #e0e9ff;
+      text-align: right;
+      font-size: 1.1rem;
+      font-family: "Fredoka", system-ui;
+      margin-bottom: 2px;
+      min-height: 32px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    #calc-display-secondary {
+      text-align: right;
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+      min-height: 16px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .calc-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 0;
+      font-size: 0.75rem;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 10px rgba(200, 170, 210, 0.35);
+    }
+
+    .calc-btn.op {
+      background: #ffe5f2;
+    }
+
+    .calc-btn.func {
+      background: #e8f0ff;
+      font-size: 0.7rem;
+    }
+
+    .calc-btn.special {
+      background: #ffdfe0;
+    }
+
+    .calc-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(200, 170, 210, 0.35);
+    }
+
+    .hint-text {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      margin-top: 4px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="window-header">
+      <div class="window-dots">
+        <div class="window-dot dot-red"></div>
+        <div class="window-dot dot-yellow"></div>
+        <div class="window-dot dot-green"></div>
+      </div>
+      <div class="window-title">
+        <span class="logo-emoji">📚</span>
+        <span data-i18n="app_title"></span>
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div>
+            <div class="brand-title">Study Space</div>
+            <div class="brand-subtitle">
+              your cozy student dashboard ☁️
+            </div>
+          </div>
+          <div class="lang-switch">
+            <button onclick="setLanguage('en')">EN</button>
+            <button onclick="setLanguage('ms')">BM</button>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="profile-card">
+            <div class="avatar">🎀</div>
+            <div>
+              <div class="profile-text-main" id="sidebar-user">
+                Student
+              </div>
+              <div class="profile-text-sub">
+                focus today, shine later ✨
+              </div>
+            </div>
+          </div>
+
+          <div class="mini-info">
+            <div class="mini-pill">
+              <span class="icon">⏳</span>
+              <span>Pomodoro time</span>
+            </div>
+            <div class="mini-pill">
+              <span class="icon">📅</span>
+              <span>Plan & review</span>
+            </div>
+            <div class="mini-pill">
+              <span class="icon">⭐</span>
+              <span>Daily goal</span>
+            </div>
+            <div class="mini-pill">
+              <span class="icon">💬</span>
+              <span>Little quotes</span>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div>
+        <!-- AUTH -->
+        <section id="auth-section">
+          <header class="main-header">
+            <div class="welcome-group">
+              <div class="welcome-sub">
+                Log in to your study world 🌈
+              </div>
+            </div>
+          </header>
+
+          <div class="tabs">
+            <button id="loginTab" class="active" onclick="showAuthForm('login')" data-i18n="login_tab"></button>
+            <button id="signupTab" onclick="showAuthForm('signup')" data-i18n="signup_tab"></button>
+          </div>
+
+          <div id="login-form" class="card">
+            <h2 data-i18n="login_title"></h2>
+            <label>
+              <span data-i18n="username_label"></span>
+              <input id="login-username" type="text" />
+            </label>
+            <label>
+              <span data-i18n="password_label"></span>
+              <input id="login-password" type="password" />
+            </label>
+            <button class="primary" onclick="handleLogin()">
+              <span>🔓</span>
+              <span data-i18n="login_btn"></span>
+            </button>
+            <p class="error" id="login-error"></p>
+          </div>
+
+          <div id="signup-form" class="card hidden">
+            <h2 data-i18n="signup_title"></h2>
+            <label>
+              <span data-i18n="full_name_label"></span>
+              <input id="signup-fullname" type="text" />
+            </label>
+            <label>
+              <span data-i18n="email_label"></span>
+              <input id="signup-email" type="email" />
+            </label>
+            <label>
+              <span data-i18n="username_label"></span>
+              <input id="signup-username" type="text" />
+            </label>
+            <label>
+              <span data-i18n="password_label"></span>
+              <input id="signup-password" type="password" />
+            </label>
+            <label>
+              <span data-i18n="preferred_language_label"></span>
+              <select id="signup-language">
+                <option value="en">English</option>
+                <option value="ms">Bahasa Melayu</option>
+              </select>
+            </label>
+            <button class="primary" onclick="handleSignup()">
+              <span>🌸</span>
+              <span data-i18n="signup_btn"></span>
+            </button>
+            <p class="error" id="signup-error"></p>
+            <p class="hint-text">
+              * your data is stored in this browser only (local demo)
+            </p>
+          </div>
+        </section>
+
+        <!-- DASHBOARD -->
+        <section id="dashboard-section" class="hidden">
+          <header class="main-header">
+            <div class="welcome-group">
+              <div id="welcome-text"></div>
+              <div class="welcome-sub">
+                let’s make a little progress today 🌱
+              </div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">
+              <span class="icon">🚪</span>
+              <span data-i18n="logout_btn"></span>
+            </button>
+          </header>
+
+          <div class="widget-grid">
+            <!-- TODAY TARGET -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">🎯</span>
+                  <span data-i18n="today_target_title"></span>
+                </div>
+                <div class="widget-badge">today</div>
+              </div>
+              <div class="widget-body">
+                <textarea id="today-target" rows="4" placeholder=""></textarea>
+                <button class="primary" onclick="saveTodayTarget()">
+                  <span>💾</span>
+                  <span data-i18n="save_btn"></span>
+                </button>
+              </div>
+            </div>
+
+                        <!-- SUBJECTS -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">📚</span>
+                  <span data-i18n="subjects_title"></span>
+                </div>
+                <div class="widget-badge">list</div>
+              </div>
+              <div class="widget-body">
+                <ul id="subjects-list"></ul>
+                <input id="new-subject-input" type="text" />
+                <button class="secondary" onclick="addSubject()">
+                  <span>➕</span>
+                  <span data-i18n="add_subject_btn"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- SUBJECT NOTES (NEW) -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">📖</span>
+                  <span id="subject-details-title">Subject Notes</span>
+                </div>
+                <div class="widget-badge">focus subject</div>
+              </div>
+              <div class="widget-body">
+                <div id="subject-details-placeholder" class="subject-details-placeholder">
+                  Select a subject from the list to start writing notes.
+                </div>
+                <textarea id="subject-notes" rows="4" class="hidden"></textarea>
+                <button id="subject-notes-save" class="secondary hidden" onclick="saveSubjectNotes()">
+                  <span>💾</span>
+                  <span>Save Notes</span>
+                </button>
+              </div>
+            </div>
+
+                        <!-- SUBJECT TASKS (NEW) -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">✅</span>
+                  <span id="subject-tasks-title">Subject Tasks</span>
+                </div>
+                <div class="widget-badge">to-do</div>
+              </div>
+              <div class="widget-body">
+                <div id="subject-tasks-placeholder" class="subject-details-placeholder">
+                  Select a subject to add tasks.
+                </div>
+
+                <div id="subject-tasks-area" class="hidden">
+                  <ul id="subject-tasks-list" class="tasks-list"></ul>
+
+                  <div class="tasks-input-row">
+                    <input id="new-task-input" type="text" placeholder="Add new task..." />
+                    <button class="secondary" onclick="addSubjectTask()">
+                      <span>➕</span>
+                      <span>Add Task</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIMER -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">⏰</span>
+                  <span data-i18n="timer_title"></span>
+                </div>
+                <div class="widget-badge">focus</div>
+              </div>
+              <div class="widget-body">
+                <label>
+                  <span data-i18n="timer_minutes_label"></span>
+                  <input id="timer-minutes" type="number" min="1" value="25" />
+                </label>
+                <div id="timer-display">00:00</div>
+                <button class="secondary" onclick="startTimer()">
+                  <span>▶️</span>
+                  <span data-i18n="start_btn"></span>
+                </button>
+                <button class="secondary" onclick="resetTimer()">
+                  <span>🔁</span>
+                  <span data-i18n="reset_btn"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- STOPWATCH -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">⏱️</span>
+                  <span data-i18n="stopwatch_title"></span>
+                </div>
+                <div class="widget-badge">track</div>
+              </div>
+              <div class="widget-body">
+                <div id="stopwatch-display">00:00</div>
+                <button class="secondary" onclick="startStopwatch()">
+                  <span>▶️</span>
+                  <span data-i18n="start_btn"></span>
+                </button>
+                <button class="secondary" onclick="stopStopwatch()">
+                  <span>⏸</span>
+                  <span data-i18n="stop_btn"></span>
+                </button>
+                <button class="secondary" onclick="resetStopwatch()">
+                  <span>🔁</span>
+                  <span data-i18n="reset_btn"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- QUOTES -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">💌</span>
+                  <span data-i18n="quote_title"></span>
+                </div>
+                <div class="widget-badge">mood</div>
+              </div>
+              <div class="widget-body">
+                <p id="quote-text"></p>
+                <button class="secondary" onclick="newQuote()">
+                  <span>✨</span>
+                  <span data-i18n="new_quote_btn"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- CALENDAR -->
+            <div class="card widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">📆</span>
+                  <span data-i18n="calendar_title"></span>
+                </div>
+                <div class="widget-badge">month</div>
+              </div>
+              <div class="widget-body calendar-body">
+                <div class="calendar-header-row">
+                  <button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
+                  <div class="calendar-month-label" id="calendar-current-month"></div>
+                  <button class="calendar-nav" onclick="changeMonth(1)">›</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                  <!-- day names + days will be generated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- SCIENTIFIC CALCULATOR -->
+            <div class="card widget calculator-widget">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <span class="icon">🧮</span>
+                  <span data-i18n="calculator_title"></span>
+                </div>
+                <div class="widget-badge">sci</div>
+              </div>
+              <div class="widget-body">
+                <div id="calc-display-main">0</div>
+                <div id="calc-display-secondary"></div>
+                <div class="calc-grid">
+                  <!-- Row 1 -->
+                  <button class="calc-btn func" data-value="sin(">sin</button>
+                  <button class="calc-btn func" data-value="cos(">cos</button>
+                  <button class="calc-btn func" data-value="tan(">tan</button>
+                  <button class="calc-btn func" data-value="log(">log</button>
+                  <button class="calc-btn func" data-value="ln(">ln</button>
+                  <!-- Row 2 -->
+                  <button class="calc-btn func" data-value="π">π</button>
+                  <button class="calc-btn func" data-value="√(">√</button>
+                  <button class="calc-btn func" data-value="^">xʸ</button>
+                  <button class="calc-btn func" data-value="(">(</button>
+                  <button class="calc-btn func" data-value=")">)</button>
+                  <!-- Row 3 -->
+                  <button class="calc-btn" data-value="7">7</button>
+                  <button class="calc-btn" data-value="8">8</button>
+                  <button class="calc-btn" data-value="9">9</button>
+                  <button class="calc-btn op" data-value="÷">÷</button>
+                  <button class="calc-btn special" data-value="DEL">DEL</button>
+                  <!-- Row 4 -->
+                  <button class="calc-btn" data-value="4">4</button>
+                  <button class="calc-btn" data-value="5">5</button>
+                  <button class="calc-btn" data-value="6">6</button>
+                  <button class="calc-btn op" data-value="×">×</button>
+                  <button class="calc-btn special" data-value="AC">AC</button>
+                  <!-- Row 5 -->
+                  <button class="calc-btn" data-value="1">1</button>
+                  <button class="calc-btn" data-value="2">2</button>
+                  <button class="calc-btn" data-value="3">3</button>
+                  <button class="calc-btn op" data-value="-">-</button>
+                  <button class="calc-btn special" data-value="Ans">Ans</button>
+                  <!-- Row 6 -->
+                  <button class="calc-btn" data-value="0">0</button>
+                  <button class="calc-btn" data-value=".">.</button>
+                  <button class="calc-btn op" style="grid-column: span 2;" data-value="+">+</button>
+                  <button class="calc-btn special" data-value="=">=</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
